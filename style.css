@@ -1,0 +1,79 @@
+#drawCanvas { 
+    border: 5px solid #828282;
+    background-color: rgb(0, 0, 0);
+    position:relative;
+    left: 17%;
+    top: 150px;
+}
+
+#classifyButton{
+
+    border: 2px solid #000;
+    position:relative;
+    top: 190px;
+    right: 155px;
+    background-color: rgb(0, 197, 0);
+}
+
+button.btn.cancel::before {
+    font-family: fontAwesome;
+    content: "\f00d\00a0";
+}
+
+button.btn.save::before {
+    font-family: fontAwesome;
+    content: "\f00c\00a0";
+}
+
+button.btn.edit::before {
+    font-family: fontAwesome;
+    content: "\f044\00a0";
+}
+
+#widthButton{
+
+    background-color: white;
+    border: 2px solid #000;
+    position:relative;
+    top: 190px;
+    right: 155px;
+    background-color: rgb(90, 222, 248);
+
+}
+
+#clearButton{
+
+    border: 2px solid #000;
+    position:relative;
+    top: 190px;
+    right: 155px;
+    background-color: red;
+}
+
+.resultText{
+
+   color:rgb(0, 0, 0);
+   position:relative;
+   top: 200px;
+   right: 450px;
+
+}
+
+.logo{
+
+    position:relative;
+    left:20px;
+    bottom: 475px;
+}
+
+.helpButton{
+    border-color: #000;
+    border-radius: 4px;
+    background-color:rgb(255, 123, 0);
+    font-family: fontAwesome;
+    scale: 2;
+    position:relative;
+    left:640px;
+    bottom: 345px;
+}
+

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Draw and Convert to Grayscale</title>
+  <link rel="stylesheet" href="style.css">
+  
+  
+</head>
+
+<body style="background-color: rgba(255, 255, 255, 0.543);"></bodystyle>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
+
+  <canvas id="drawCanvas" width="400" height="400"></canvas>
+  <button class = "btn edit btn-default" id = "widthButton" onclick="editWidth()">Change Width</button>
+  <button class = "btn cancel btn-default" id = "clearButton" onclick="clearCanvas()">Clear</button>
+  <button class= "btn save btn-default" id = "classifyButton">Classify</button>
+  <button class= "helpButton" id = "helpButton" onclick = "instructions()">Help</button>
+
+  <script>
+    
+    const canvas = document.getElementById('drawCanvas');
+    const ctx = canvas.getContext('2d');
+    var isDrawing = false;
+    ctx.lineWidth = 2;
+
+    // Event listeners for drawing
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseout', stopDrawing);
+
+    function startDrawing(e) {
+
+      isDrawing = true;
+      draw(e);
+    }
+
+    function editWidth(){
+
+      const width = prompt('Set Width to: ');
+      if(width!== null)
+        ctx.lineWidth = parseFloat(width) || ctx.lineWidth;
+
+    }
+
+    function clearCanvas(){
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function draw(e) {
+
+      if (!isDrawing) 
+        return;
+
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#fff';
+
+      ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+    }
+
+    function instructions(){
+
+      var message = "- Use your mouse to draw whatever you want on the black canvas.  \n\n- Use the Change Width Button to adjust the brush's ";
+      message += "thickness.\n\n- Use the clear button to researt your drawing\n\n- Use the Classify Button to run the algorithim which determines what you drew"
+      alert(message);
+    }
+
+    function stopDrawing() {
+      isDrawing = false;
+      ctx.beginPath();
+    }
+  </script>
+
+  <h1 class = "resultText"> Result: </h1>
+  <img class = "logo" src="doodl.png"alt="Doodl" width="160" height="60">
+</body>
+</html>
