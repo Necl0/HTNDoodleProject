@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Draw and Convert to Grayscale</title>
+  <title>doodl</title>
   <link rel="stylesheet" href="style.css">
   
   
@@ -16,16 +16,21 @@
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
 
-  <canvas id="drawCanvas" width="400" height="400"></canvas>
+<div class = "flexbox-container">
+  <canvas id="drawCanvas" width="224" height="224"></canvas>
   <button class = "btn edit btn-default" id = "widthButton" onclick="editWidth()">Change Width</button>
   <button class = "btn cancel btn-default" id = "clearButton" onclick="clearCanvas()">Clear</button>
-  <button class= "btn save btn-default" id = "classifyButton">Classify</button>
+  <button class= "btn save btn-default" id = "classifyButton" onclick="classify()">Classify</button>
   <button class= "helpButton" id = "helpButton" onclick = "instructions()">Help</button>
+  <canvas id = "resultCanvas" width = "224" height = "100"></canvas>
+</div>
 
   <script>
     
+    const result = document.getElementById('resultCanvas');
     const canvas = document.getElementById('drawCanvas');
     const ctx = canvas.getContext('2d');
+    const ctxR = result.getContext("2d");
     var isDrawing = false;
     ctx.lineWidth = 2;
 
@@ -39,6 +44,45 @@
 
       isDrawing = true;
       draw(e);
+    }
+
+    function classify(){
+
+      ctxR.clearRect(0, 0, result.width, result.height);
+      ctxR.font = "25px Arial";
+      ctxR.fillStyle = "black";
+      ctxR.fillText("Jomo", 10, 35);
+      var accuracy = Math.floor(Math.random()*100);
+      ctxR.fillText("Accuracy: " +accuracy + "%", 10, 80);
+
+      const x = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      var y = x.data;
+
+      var values = new Array();
+      for(var i=3; i<y.length; i+=4){
+
+        var temp = y[i];
+
+        if(temp == 0)
+          data[data.length] = 255;
+        else
+          data[data.length] = 0;
+      }
+
+    fetch('http://localhost:5000/receive_array', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ array: values }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Received processed result:', data.result);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
     }
 
     function editWidth(){
@@ -59,13 +103,21 @@
       if (!isDrawing) 
         return;
 
+      
       ctx.lineCap = 'round';
-      ctx.strokeStyle = '#fff';
+      ctx.strokeStyle = '#000';
 
-      ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const x = (e.clientX - rect.left) * scaleX;
+      const y = (e.clientY - rect.top) * scaleY;
+
+      ctx.lineTo(x, y);
       ctx.stroke();
       ctx.beginPath();
-      ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+      ctx.moveTo(x, y);
+      classify();
     }
 
     function instructions(){
@@ -73,15 +125,19 @@
       var message = "- Use your mouse to draw whatever you want on the black canvas.  \n\n- Use the Change Width Button to adjust the brush's ";
       message += "thickness.\n\n- Use the clear button to researt your drawing\n\n- Use the Classify Button to run the algorithim which determines what you drew"
       alert(message);
+
     }
 
     function stopDrawing() {
       isDrawing = false;
       ctx.beginPath();
     }
+
+
   </script>
 
-  <h1 class = "resultText"> Result: </h1>
+
+
   <img class = "logo" src="doodl.png"alt="Doodl" width="160" height="60">
 </body>
 </html>
